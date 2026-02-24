@@ -1,0 +1,234 @@
+openapi: 3.0.3
+info:
+  title: EC2 Instance Management API
+  version: 1.0.0
+  description: Retrieve EC2 instance details, networking, storage metadata, and manage instance lifecycle via tag or instance ID filters.
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+paths:
+  /get_ec2_details:
+    get:
+      summary: Get EC2 Instances by Tag
+      operationId: get_ec2_details
+      description: Retrieve a list of EC2 instances filtered by tag key and value.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with tag_key and tag_value.
+          schema:
+            type: string
+            example: '{"tag_key": "env", "tag_value": "dev"}'
+      responses:
+        '200':
+          description: Matching EC2 instances.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  instances:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /get_ec2_networking:
+    get:
+      summary: Get EC2 Networking Info
+      operationId: get_ec2_networking
+      description: Returns networking details for a list of EC2 instance IDs.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with list of instance_ids.
+          schema:
+            type: string
+            example: '{"instance_ids": ["i-0abc123", "i-0def456"]}'
+      responses:
+        '200':
+          description: Network interface information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  networking:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /get_ec2_storage:
+    get:
+      summary: Get EC2 Storage Info
+      operationId: get_ec2_storage
+      description: Returns EBS volume details for a list of EC2 instance IDs.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with list of instance_ids.
+          schema:
+            type: string
+            example: '{"instance_ids": ["i-0abc123", "i-0def456"]}'
+      responses:
+        '200':
+          description: Attached volume details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storage:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /start_ec2_instances:
+    post:
+      summary: Start EC2 Instances
+      operationId: start_ec2_instances
+      description: Start one or more EC2 instances by their instance IDs.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with list of instance_ids to start.
+          schema:
+            type: string
+            example: '{"instance_ids": ["i-0abc123", "i-0def456"]}'
+      responses:
+        '200':
+          description: Successfully initiated start operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  instances:
+                    type: array
+                    maxItems: 50
+                    items:
+                      type: object
+                      properties:
+                        InstanceId:
+                          type: string
+                        CurrentState:
+                          type: string
+                        PreviousState:
+                          type: string
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /stop_ec2_instances:
+    post:
+      summary: Stop EC2 Instances
+      operationId: stop_ec2_instances
+      description: Stop one or more EC2 instances by their instance IDs.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with list of instance_ids to stop and optional force flag.
+          schema:
+            type: string
+            example: '{"instance_ids": ["i-0abc123", "i-0def456"], "force": false}'
+      responses:
+        '200':
+          description: Successfully initiated stop operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  instances:
+                    type: array
+                    maxItems: 50
+                    items:
+                      type: object
+                      properties:
+                        InstanceId:
+                          type: string
+                        CurrentState:
+                          type: string
+                        PreviousState:
+                          type: string
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /list_all_ec2_instances:
+    get:
+      summary: List All EC2 Instances
+      operationId: list_all_ec2_instances
+      description: List all EC2 instances with optional state filtering.
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: JSON string with optional state filter.
+          schema:
+            type: string
+            example: '{"state": "running"}'
+      responses:
+        '200':
+          description: List of EC2 instances.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  instances:
+                    type: array
+                    maxItems: 200
+                    items:
+                      type: object
+                      properties:
+                        InstanceId:
+                          type: string
+                        InstanceType:
+                          type: string
+                        State:
+                          type: string
+                        LaunchTime:
+                          type: string
+                        PrivateIpAddress:
+                          type: string
+                        PublicIpAddress:
+                          type: string
+                        Tags:
+                          type: object
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.

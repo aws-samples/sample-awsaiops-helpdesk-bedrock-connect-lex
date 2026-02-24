@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: SSM Document Executor
+  version: 1.0.0
+  description: API for retrieving parameters, executing SSM documents, checking their command status, and managing patch baselines.
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+paths:
+  /get_document_parameters:
+    get:
+      description: Retrieve required and optional parameters for a given SSM document.
+      summary: Get SSM Document Parameters
+      operationId: get_document_parameters
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Name of the SSM document to inspect.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document parameters retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  document_name:
+                    type: string
+                  parameters:
+                    type: object
+                    properties:
+                      required:
+                        type: array
+                        maxItems: 50
+                        items:
+                          type: string
+                      optional:
+                        type: array
+                        maxItems: 50
+                        items:
+                          type: string
+        '400': { description: Missing or invalid document_name. }
+        '500': { description: Server error during parameter lookup. }
+
+  /execute_ssm_document:
+    post:
+      description: Execute an SSM document on EC2 instances based on parameters and tag-based targets.
+      summary: Execute SSM Document
+      operationId: execute_ssm_document
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: A JSON string containing document_name, parameters, and targets.
+          schema:
+            type: string
+            example: '{"document_name": "AWS-ConfigureAWSPackage", "parameters": {"action": ["Install"]}, "targets": [{"Key": "tag:env", "Values": ["dev"]}]}'
+      responses:
+        '200':
+          description: SSM document executed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400': { description: Missing required fields or malformed input. }
+        '500': { description: Error while executing the SSM document. }
+
+  /check_command_status:
+    get:
+      description: Check the execution status of a previously triggered SSM command.
+      summary: Check SSM Command Status
+      operationId: check_command_status
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Command ID to check the execution status for.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the command status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400': { description: Missing or invalid Command ID. }
+        '500': { description: Failed to retrieve status from SSM. }
+
+  /list_patch_baselines:
+    get:
+      description: List all patch baselines in the account.
+      summary: List Patch Baselines
+      operationId: list_patch_baselines
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Dummy query value (not used).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Patch baselines listed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  patch_baselines:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+        '500': { description: Error retrieving patch baselines. }
+
+  /create_patch_baseline:
+    post:
+      description: Create a new patch baseline.
+      summary: Create Patch Baseline
+      operationId: create_patch_baseline
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON containing patch baseline name, OS, rules, etc.
+          schema:
+            type: string
+      responses:
+        '200': { description: Patch baseline created. }
+        '400': { description: Invalid input. }
+        '500': { description: Error creating patch baseline. }
+
+  /describe_patch_baseline:
+    get:
+      description: Describe an existing patch baseline.
+      summary: Describe Patch Baseline
+      operationId: describe_patch_baseline
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The BaselineId to describe.
+          schema:
+            type: string
+      responses:
+        '200': { description: Patch baseline details returned. }
+        '400': { description: Invalid BaselineId. }
+        '500': { description: Error describing patch baseline. }
+
+  /update_patch_baseline:
+    post:
+      description: Update an existing patch baseline.
+      summary: Update Patch Baseline
+      operationId: update_patch_baseline
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON with update fields for the baseline.
+          schema:
+            type: string
+      responses:
+        '200': { description: Patch baseline updated. }
+        '400': { description: Invalid input. }
+        '500': { description: Error updating patch baseline. }
+
+  /register_patch_group:
+    post:
+      description: Register a patch group to a specific patch baseline.
+      summary: Register Patch Group
+      operationId: register_patch_group
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON with baseline_id and patch_group.
+          schema:
+            type: string
+      responses:
+        '200': { description: Patch group registered successfully. }
+        '400': { description: Invalid input. }
+        '500': { description: Error registering patch group. }

@@ -1,0 +1,15 @@
+{
+  "name": "aws-ai-ops-center",
+  "version": "1.0.0",
+  "description": "This is a blank project for CDK development with Python.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.38.0",
+    "constructs": "10.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

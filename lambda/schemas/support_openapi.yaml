@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: AWS Support Case API
+  version: 1.0.0
+  description: Create, retrieve, and update AWS Support cases for issues detected in other agents.
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+paths:
+  /create_support_case:
+    post:
+      summary: Create AWS Support Case
+      operationId: create_support_case
+      description: Create a new AWS Support case for issues detected in other agents.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with support case details.
+          schema:
+            type: string
+            example: '{"subject": "Bedrock Agent Error", "service_code": "amazon-bedrock", "category_code": "other", "severity_code": "low", "communication_body": "Error occurred in EC2 agent", "agent_name": "EC2Agent", "error_details": {"error_type": "APIError", "error_message": "Failed to describe instances", "timestamp": "2025-04-21T06:30:00Z"}}'
+      responses:
+        '200':
+          description: Support case created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  case_id:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /get_support_cases:
+    get:
+      summary: Get AWS Support Cases
+      operationId: get_support_cases
+      description: Retrieve AWS Support cases based on filters.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with filter parameters.
+          schema:
+            type: string
+            example: '{"include_resolved": false, "after_time": "2025-04-20T00:00:00Z", "case_id_list": ["case-123456789012-muen-2025-12345678901234"]}'
+      responses:
+        '200':
+          description: List of support cases.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cases:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.
+
+  /update_support_case:
+    post:
+      summary: Update AWS Support Case
+      operationId: update_support_case
+      description: Add communication to an existing AWS Support case.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with case ID and communication details.
+          schema:
+            type: string
+            example: '{"case_id": "case-123456789012-muen-2025-12345678901234", "communication_body": "Additional information about the error"}'
+      responses:
+        '200':
+          description: Support case updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  case_id:
+                    type: string
+        '400':
+          description: Missing or invalid input.
+        '500':
+          description: Internal server error.

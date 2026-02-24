@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Backup Agent API
+  version: 1.0.0
+  description: API for managing AWS Backup plans, assignments, and job history.
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+paths:
+  /list_backup_plans:
+    get:
+      summary: List Backup Plans
+      operationId: list_backup_plans
+      description: Retrieve all existing AWS Backup plans.
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Optional parameter for future filters or extensions.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of backup plans.
+        '500':
+          description: Server error.
+
+  /create_backup_plan:
+    post:
+      summary: Create Backup Plan
+      operationId: create_backup_plan
+      description: Create a backup plan using name and schedule rules.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with plan_name and rules (schedule, lifecycle).
+          schema:
+            type: string
+            example: '{"plan_name": "daily-plan", "rules": [{"rule_name": "daily", "schedule": "cron(0 12 * * ? *)", "lifecycle": {"delete_after_days": 35}}]}'
+      responses:
+        '200':
+          description: Backup plan created.
+        '400':
+          description: Invalid input.
+        '500':
+          description: Error during creation.
+
+  /describe_backup_plan:
+    get:
+      summary: Describe Backup Plan
+      operationId: describe_backup_plan
+      description: Get the configuration details of a specific backup plan.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Backup plan ID.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Backup plan details.
+        '400':
+          description: Missing or invalid ID.
+        '500':
+          description: Retrieval error.
+
+  /delete_backup_plan:
+    post:
+      summary: Delete Backup Plan
+      operationId: delete_backup_plan
+      description: Delete a specific backup plan by ID.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Backup plan ID to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deletion success.
+        '400':
+          description: Invalid request.
+        '500':
+          description: Deletion error.
+
+  /assign_resource_to_backup_plan:
+    post:
+      summary: Assign Resource to Backup Plan
+      operationId: assign_resource_to_backup_plan
+      description: Associate a resource ARN to a backup plan.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: JSON string with plan_id, resource_arn, and iam_role_arn.
+          schema:
+            type: string
+            example: '{"plan_id": "abc123", "resource_arn": "arn:aws:ec2:...", "iam_role_arn": "arn:aws:iam::..."}'
+      responses:
+        '200':
+          description: Resource assigned.
+        '400':
+          description: Invalid input.
+        '500':
+          description: Assignment failure.
+
+  /list_backup_jobs:
+    get:
+      summary: List Backup Jobs
+      operationId: list_backup_jobs
+      description: Retrieve recent backup job records.
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Optional parameter for future filtering.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of backup jobs.
+        '500':
+          description: Error retrieving job list.

@@ -1,0 +1,7 @@
+aws-cdk-lib>=2.200.0
+aws-cdk.aws-lambda-python-alpha>=2.200.0a0
+boto3>=1.37.0
+cdk-nag>=2.35.0
+cdklabs.generative-ai-cdk-constructs>=0.1.310
+constructs>=10.4.0
+pytest

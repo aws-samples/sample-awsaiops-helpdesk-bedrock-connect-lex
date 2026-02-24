@@ -1,0 +1,39 @@
+# CDK
+cdk.out/
+*.js
+*.d.ts
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Lambda builds
+lambda/*/build/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# AWS
+.aws/
+supervisor_agent_alias.txt
+
+# Agent configuration (contains deployment-specific IDs)
+supervisor_agent_alias.txt
