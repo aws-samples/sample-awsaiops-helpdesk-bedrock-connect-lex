@@ -1,4 +1,4 @@
-# Multi-agent IT operations sample for Amazon Bedrock
+# Sample Multi-agent IT operations sample 
 
 A sample demonstrating multi-agent collaboration with Amazon Bedrock, Amazon Connect and Amazon Lex to automate EC2, SSM, Backup, and Support operations using AWS Lambda.
 
