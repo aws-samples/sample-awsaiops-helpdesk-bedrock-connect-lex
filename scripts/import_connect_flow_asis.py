@@ -251,7 +251,7 @@ def main():
         print(f"   ✅ Auth Bot ARN: {values.get('auth_bot_arn', 'Not found')}")
         print(f"   ✅ Agent Bot ARN: {values.get('agent_bot_arn', 'Not found')}")
         print(f"   ✅ DynamoDB ARN: {values.get('dynamodb_arn', 'Not found')}")
-        print(f"   ✅ Employee Table: {values.get('employee_table', 'Not found')}")
+        print("   ✅ Employee Table: Configured" if values.get('employee_table') else "   ⚠️ Employee Table: Not found")
     except Exception as e:
         print(f"❌ Error getting deployment values: {e}")
         return
