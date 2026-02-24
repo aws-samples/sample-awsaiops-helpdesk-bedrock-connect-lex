@@ -49,7 +49,7 @@ def lambda_handler(event, context):
         
         if 'Item' in response:
             employee = response['Item']
-            print(f"Employee found: {employee.get('name', 'Unknown')}")
+            print("Employee record found for provided employee ID")
             
             return create_response(True, "Authentication successful", {
                 'empId': employee['empId'],
