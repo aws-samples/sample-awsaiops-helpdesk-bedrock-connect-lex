@@ -17,6 +17,10 @@ Example scenarios:
 - "Create a backup plan for instances tagged Environment=Production"
 - "Create a support case for high CPU utilization on instance i-1234abcd"
 
+## Contributors
+
+Aditya Ambati, Anand Krishna Varanasi, Bikash Chandra Rout, JAGDISH KOMAKULA, Ramu Jagini, T.V.R.L.Phani Kumar Dadi
+
 ## Architecture Overview
 
 ```mermaid
